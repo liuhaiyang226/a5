@@ -80,10 +80,8 @@ class MarbleViewModel : ViewModel(), SensorEventListener {
             // Skip if dt is too large (e.g., app was paused)
             if (dt > 0.1f) return
 
-            // sensor's y axis points up the screen, but offset's y points down
-            // We DON'T negate because gravity sensor already accounts for direction
             val gravityX = event.values[0]
-            val gravityY = event.values[1]  // Removed negation
+            val gravityY = -event.values[1]
 
             updatePhysics(gravityX, gravityY, dt)
         }
