@@ -25,7 +25,10 @@ class MarbleViewModel : ViewModel(), SensorEventListener {
 
     // physics constants
     private val friction = 0.98f
-    private val scale = 0.5f
+    private val scale = 50f // Increased scale for better responsiveness with real dt
+
+    // time tracking for physics
+    private var lastUpdateTime = System.currentTimeMillis()
 
     fun setupSensor(context: Context) {
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -47,6 +50,8 @@ class MarbleViewModel : ViewModel(), SensorEventListener {
                 SensorManager.SENSOR_DELAY_GAME
             )
         }
+        // Reset time when sensor starts
+        lastUpdateTime = System.currentTimeMillis()
     }
 
     fun unregisterSensor() {
@@ -68,19 +73,23 @@ class MarbleViewModel : ViewModel(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         event?.let {
-            // sensor's y axis points up the screen, but offset's y points down
-            // so we need to negate it
-            val gravityX = event.values[0]
-            val gravityY = -event.values[1]
+            val currentTime = System.currentTimeMillis()
+            val dt = (currentTime - lastUpdateTime) / 1000f // Convert to seconds
+            lastUpdateTime = currentTime
 
-            updatePhysics(gravityX, gravityY)
+            // Skip if dt is too large (e.g., app was paused)
+            if (dt > 0.1f) return
+
+            // sensor's y axis points up the screen, but offset's y points down
+            // We DON'T negate because gravity sensor already accounts for direction
+            val gravityX = event.values[0]
+            val gravityY = event.values[1]  // Removed negation
+
+            updatePhysics(gravityX, gravityY, dt)
         }
     }
 
-    private fun updatePhysics(gravityX: Float, gravityY: Float) {
-        // dt is handled by sensor delay, simplified physics update
-        val dt = 1f
-
+    private fun updatePhysics(gravityX: Float, gravityY: Float, dt: Float) {
         // update velocity based on gravity
         var newVelX = marbleState.velocityX + (dt * scale * gravityX)
         var newVelY = marbleState.velocityY + (dt * scale * gravityY)

@@ -1,5 +1,6 @@
 package com.example.assignment5
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun MarbleView(viewModel: MarbleViewModel = viewModel()) {
     val context = LocalContext.current
