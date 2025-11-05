@@ -90,8 +90,8 @@ class MarbleViewModel : ViewModel(), SensorEventListener {
         newVelY *= friction
 
         // update position
-        var newX = marbleState.x + (dt * scale * newVelX)
-        var newY = marbleState.y + (dt * scale * newVelY)
+        var newX = marbleState.x + newVelX
+        var newY = marbleState.y + newVelY
 
         // boundary checking - bounce off walls
         if (newX < 0) {
